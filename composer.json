@@ -1,0 +1,28 @@
+{
+    "name": "sultanov-solutions/guideler",
+    "version": "0.0.1",
+    "description": "Guide idler tools for making grid & forms builders",
+    "require": {
+        "laravel/framework": "^v9.50.0|^10.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Guideler\\Tools\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jamal Sultanov",
+            "email": "cl.jamal@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Guideler\\Tools\\ServiceProvider"
+            ]
+        }
+    }
+}
