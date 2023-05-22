@@ -31,6 +31,29 @@ class Filters
 
     public function addFilter(string $label, string $prop, array $options = []): static
     {
+        if (request()->has($prop))
+        {
+            $value = request()->get($prop);
+
+            if (str($value)->contains(','))
+            {
+                $value = explode(',', $value);
+                $value = collect($value)->filter(fn($s) => !empty($s))->toArray();
+                if (!count($value))
+                    unset($value);
+            }
+            else
+            {
+                $value = request()->get($prop);
+                if (empty($value))
+                    unset($value);
+            }
+
+            if (isset($value))
+                $options['value'] = $value;
+        }
+
+
         $condition = $options['condition'] ?? 'eq';
 
         switch ($condition) {
@@ -134,16 +157,16 @@ class Filters
         });
     }
 
-    private function issetBWFilter($name)
+    private function issetBWFilter($name): array
     {
         $filters = [];
         $filter_from = $this->getFilter($name . '_from');
         $filter_to = $this->getFilter($name . '_to');
 
-        if ($filter_from)
+        if (!empty($filter_from) || ($filter_from instanceof Collection && $filter_from->count()))
             $filters[] = $filter_from;
 
-        if ($filter_to)
+        if (!empty($filter_to) || ($filter_to instanceof Collection && $filter_to->count()))
             $filters[] = $filter_to;
 
         return $filters;

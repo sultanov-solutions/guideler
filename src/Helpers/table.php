@@ -3,6 +3,7 @@
 use Guideler\Tools\Builders\Table\Builder;
 use Guideler\Tools\Builders\Table\Resource\Filters;
 use Guideler\Tools\Builders\Table\Resource\Grid;
+use Guideler\Tools\Builders\Table\Options;
 
 if (!function_exists('g_table'))
 {
