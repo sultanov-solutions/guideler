@@ -60,7 +60,7 @@ class GuidelerController extends BaseController
         {
             foreach ($this->acceptedFilters as $filter)
             {
-                $condition = $tableFilters[$filter_key]['condition'] ?? 'eq';
+                $condition = $tableFilters[$filter]['condition'] ?? 'eq';
 
                 if(!in_array($condition, ['q', 'eq']))
                     continue;
