@@ -64,7 +64,7 @@ class GuidelerController extends BaseController
 
                 if(!in_array($condition, ['q', 'eq']))
                     continue;
-                
+
                 $model->orWhere($filter, 'ilike', "%".request()->get('s')."%");
             }
         }
@@ -89,8 +89,8 @@ class GuidelerController extends BaseController
     private function requestFilters(): array
     {
         $filters = request()->get('filter', []);
-        $filters = collect($filters)->filter(function ($filter, $key) use ($acceptedFilters){
-            return in_array($key, $acceptedFilters);
+        $filters = collect($filters)->filter(function ($filter, $key){
+            return in_array($key, $this->acceptedFilters);
         });
 
         return $filters->toArray();
