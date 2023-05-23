@@ -17,11 +17,14 @@ class GuidelerController extends BaseController
 
     private Grid $grid;
 
+    public array $acceptedFilters = [];
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $this->grid($this->table()->grid());
             $this->filters($this->table()->filters());
+            $this->acceptedFilters = collect($this->table()->filters()->toArray())->keys()->toArray();
             return $next($request);
         });
     }
@@ -29,9 +32,10 @@ class GuidelerController extends BaseController
     public function applyFilters(Builder $model)
     {
         $filters = $this->requestFilters();
+        $tableFilters = $this->table()->filters()->toArray();
+
         if (count($filters))
         {
-            $tableFilters = $this->table()->filters()->toArray();
             foreach ($filters as $filter_key => $val)
             {
                 if (empty($val))
@@ -51,7 +55,21 @@ class GuidelerController extends BaseController
                 }
             }
         }
-        
+
+        if (request()->has('s') && !empty(request()->get('s')))
+        {
+            foreach ($this->acceptedFilters as $filter)
+            {
+                $condition = $tableFilters[$filter_key]['condition'] ?? 'eq';
+
+                if(!in_array($condition, ['q', 'eq']))
+                    continue;
+                
+                $model->orWhere($filter, 'ilike', "%".request()->get('s')."%");
+            }
+        }
+
+
         return $model;
     }
 
@@ -70,7 +88,6 @@ class GuidelerController extends BaseController
 
     private function requestFilters(): array
     {
-        $acceptedFilters = collect($this->table()->filters()->toArray())->keys()->toArray();
         $filters = request()->get('filter', []);
         $filters = collect($filters)->filter(function ($filter, $key) use ($acceptedFilters){
             return in_array($key, $acceptedFilters);
